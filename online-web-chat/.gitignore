@@ -31,3 +31,11 @@ build/
 
 ### VS Code ###
 .vscode/
+
+# ====================
+# 日志文件
+# ====================
+*.log
+logs/
+
+application-prod.yml
