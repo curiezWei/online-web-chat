@@ -21,6 +21,7 @@ public class UserAPI {
     public User login(String userName, String password, HttpServletRequest request) {
         User user = userMapper.selectByName(userName);
         if(user==null || !user.getPassword().equals(password)) {
+            user.setPassword("");
             log.info("登录失败！用户名或密码错误！"+user);
             return new User();
         }

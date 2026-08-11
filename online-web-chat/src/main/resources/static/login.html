@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>登录</title>
+    <link rel="stylesheet" href="css/common.css" />
+    <link rel="stylesheet" href="css/login.css" />
+  </head>
+  <body>
+    <div class="login-wrapper">
+      <div class="login-card">
+        <div class="login-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+            <circle cx="12" cy="7" r="4"/>
+          </svg>
+        </div>
+        <h2 class="login-title">登录</h2>
+        <p class="login-subtitle">在线聊天，随时随地</p>
+        <div class="input-group">
+          <input type="text" id="userName" placeholder="用户名" autocomplete="username" />
+        </div>
+        <div class="input-group">
+          <input type="password" id="password" placeholder="密码" autocomplete="current-password" />
+        </div>
+        <button id="submit" class="login-btn">登录</button>
+      </div>
+    </div>
+
+    <script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.7.1/jquery.js"></script>
+    <script>
+        let submitButton = document.querySelector('#submit');
+        submitButton.onclick = function () {
+            let userName = document.querySelector('#userName').value;
+            let password = document.querySelector('#password').value;
+            if(userName ==''||password=='') {
+                alert("请输入用户名和密码！");
+                return;
+            }
+
+            $.ajax({
+                url:"/login",
+                type:"post",
+                data:{
+                    userName : userName,
+                    password : password
+                },
+                success:function (result) {
+                    if(result&&result.userId>0) {
+                        location.href = "client.html"
+                    }else {
+                        alert("登录失败！")
+                    }
+                }
+            });
+        }
+    </script>
+  </body>
+</html>
