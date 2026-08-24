@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>注册</title>
+    <link rel="stylesheet" href="css/common.css" />
+    <link rel="stylesheet" href="css/register.css" />
+  </head>
+  <body>
+    <div class="register-wrapper">
+      <div class="register-card">
+        <div class="register-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+            <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+            <circle cx="8.5" cy="7" r="4"/>
+            <line x1="20" y1="8" x2="20" y2="14"/>
+            <line x1="23" y1="11" x2="17" y2="11"/>
+          </svg>
+        </div>
+        <h2 class="register-title">创建账号</h2>
+        <p class="register-subtitle">加入我们，开始聊天</p>
+        <div class="input-group">
+          <input type="text" id="userName" placeholder="用户名" autocomplete="username" />
+        </div>
+        <div class="input-group">
+          <input type="password" id="password" placeholder="密码" autocomplete="new-password" />
+        </div>
+        <div class="input-group">
+          <input type="password" id="passwordConfirm" placeholder="确认密码" autocomplete="new-password" />
+        </div>
+        <button id="submit" class="register-btn">注册</button>
+        <p class="switch-link">
+          已有账号？<a href="login.html">去登录</a>
+        </p>
+      </div>
+    </div>
+
+    <script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.7.1/jquery.js"></script>
+    <script>
+      let submitButton = document.querySelector('#submit');
+      submitButton.onclick = function () {
+        let userName = document.querySelector('#userName').value;
+        let password = document.querySelector('#password').value;
+        let passwordConfirm = document.querySelector('#passwordConfirm').value;
+        if (userName == '' || password == '') {
+          alert("请填写用户名和密码！");
+          return;
+        }
+        if (password !== passwordConfirm) {
+          alert("两次输入的密码不一致！");
+          return;
+        }
+
+        $.ajax({
+          url: "/register",
+          type: "post",
+          data: {
+            userName: userName,
+            password: password
+          },
+          success: function (result) {
+            if (result && result.userId > 0) {
+              alert("注册成功！");
+              location.href = "login.html";
+            } else {
+              alert("注册失败，用户名可能已被占用！");
+            }
+          }
+        });
+      }
+    </script>
+  </body>
+</html>
