@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>聊天主界面</title>
+    <link rel="stylesheet" href="css/common.css" />
+    <link rel="stylesheet" href="css/client.css" />
+  </head>
+  <body>
+    <!-- 覆盖层，负责背景 -->
+    <div class="cover"></div>
+    <!-- 整个界面的总容器 -->
+    <div class="client-container">
+      <!-- 主要内容区域 -->
+      <div class="main">
+        <!-- 左侧区域，好友列表和会话记录 -->
+        <div class="left">
+          <!-- 当前用户名 -->
+          <div class="user">curiez</div>
+          <div class="search">
+            <input type="text" placeholder="搜索好友" />
+            <button></button>
+          </div>
+          <!-- 标签页 -->
+          <div class="tab">
+            <div class="tab-session"></div>
+            <div class="tab-friend"></div>
+          </div>
+          <!-- 会话列表 -->
+          <ul class="list" id="session-list">
+            <li>
+              <h3>zhangsan</h3>
+              <p>你好，我在忙，稍后联系你。</p>
+            </li>
+            <li class="selected">
+              <h3>zhangsan</h3>
+              <p>你好，我在忙，稍后联系你。</p>
+            </li>
+            <li>
+              <h3>zhangsan</h3>
+              <p>你好，我在忙，稍后联系你。</p>
+            </li>
+            <li>
+              <h3>zhangsan</h3>
+              <p>你好，我在忙，稍后联系你。</p>
+            </li>
+            <li>
+              <h3>zhangsan</h3>
+              <p>你好，我在忙，稍后联系你。</p>
+            </li>
+            <li>
+              <h3>zhangsan</h3>
+              <p>你好，我在忙，稍后联系你。</p>
+            </li>
+            <li>
+              <h3>zhangsan</h3>
+              <p>你好，我在忙，稍后联系你。</p>
+            </li>
+            <li>
+              <h3>zhangsan</h3>
+              <p>你好，我在忙，稍后联系你。</p>
+            </li>
+            <li>
+              <h3>zhangsan</h3>
+              <p>你好，我在忙，稍后联系你。</p>
+            </li>
+            <li>
+              <h3>zhangsan</h3>
+              <p>你好，我在忙，稍后联系你。</p>
+            </li>
+          </ul>
+          <!-- 好友列表 -->
+          <ul class="list hide" id="friend-list">
+            <li>
+              <h4>lisi</h4>
+            </li>
+            <li>
+              <h4>lisi</h4>
+            </li>
+            <li>
+              <h4>lisi</h4>
+            </li>
+            <li>
+              <h4>lisi</h4>
+            </li>
+          </ul>
+        </div>
+        <!-- 右侧区域，聊天编辑框 -->
+        <div class="right"></div>
+      </div>
+    </div>
+  </body>
+</html>

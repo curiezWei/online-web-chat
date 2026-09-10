@@ -1,0 +1,158 @@
+.client-container {
+  display: flex;
+  height: 100%;
+  width: 100%;
+  justify-content: center;
+  align-items: center;
+}
+
+.main {
+  width: 1000px;
+  height: 740px;
+  background-color: rgb(238, 238, 238);
+  border-radius: 5px;
+  display: flex;
+  z-index: 2;
+}
+
+.main .left {
+  width: 280px;
+  height: 100%;
+  background-color: rgb(50, 50, 50);
+  border-top-left-radius: 5px;
+  border-bottom-left-radius: 5px;
+}
+
+.main .right {
+  width: 720px;
+  height: 100%;
+  background-color: rgb(238, 238, 238);
+  padding: 0 20px;
+}
+
+.cover {
+  width: 100%;
+  height: 100%;
+
+  background-image: url(../img/wallpaper.jpg);
+  background-size: cover;
+  background-position: center center;
+  background-repeat: no-repeat;
+
+  /* 为了让背景图片覆盖整个容器 */
+  position: absolute;
+  top: 0;
+  left: 0;
+
+  z-index: 1;
+  filter: blur(20px);
+}
+
+.main .left .user {
+  height: 80px;
+  line-height: 80px;
+  color: white;
+  font-size: 20px;
+  padding: 0 20px;
+}
+
+.main .left .search {
+  height: 40px;
+  padding: 0 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.main .left .search input {
+  width: 200px;
+  height: 40px;
+  line-height: 30px;
+  font-size: 14px;
+  color: white;
+  background-color: rgb(100, 100, 100);
+  border: none;
+  outline: none;
+  padding-left: 10px;
+  border-top-left-radius: 5px;
+  border-bottom-left-radius: 5px;
+}
+
+.main .left .search button {
+  width: 40px;
+  height: 40px;
+  border: none;
+  outline: none;
+  background-color: rgb(100, 100, 100);
+  border-top-right-radius: 5px;
+  border-bottom-right-radius: 5px;
+  background-image: url(../img/查找用户.png);
+  background-repeat: no-repeat;
+  background-size: 20px 20px;
+  background-position: center center;
+}
+
+.main .left .search button:active {
+  background-color: rgb(200, 200, 200);
+}
+
+.main .left .tab {
+  height: 50px;
+  display: flex;
+  align-items: center;
+}
+
+.main .left .tab .tab-session {
+  height: 100%;
+  width: 50%;
+  background-image: url(../img/评论\,说话\,讨论\,留言.png);
+  background-repeat: no-repeat;
+  background-size: 30px 30px;
+  background-position: center center;
+}
+
+.main .left .tab .tab-friend {
+  height: 100%;
+  width: 50%;
+  background-image: url(../img/用户-角色-用户名-单人_jurassic.png);
+  background-repeat: no-repeat;
+  background-size: 30px 30px;
+  background-position: center center;
+}
+
+.main .left .list {
+  height: 570px;
+  overflow: auto;
+}
+
+.main .left .list li {
+  height: 60px;
+  padding: 10px 20px;
+  color: white;
+  border-top: 1px solid black;
+}
+
+.main .left .list .selected {
+  background-color: rgb(91, 91, 91);
+}
+
+.main .left .list li h3,
+.main .left .list li p {
+  height: 20px;
+  font-size: 14px;
+  line-height: 20px;
+}
+
+.main .left .list li h4 {
+  height: 40px;
+  line-height: 40px;
+  font-size: 20px;
+}
+
+.hide {
+  display: none;
+}
+
+::-webkit-scrollbar {
+  display: none;
+}
