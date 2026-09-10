@@ -105,7 +105,7 @@
 .main .left .tab .tab-session {
   height: 100%;
   width: 50%;
-  background-image: url(../img/评论\,说话\,讨论\,留言.png);
+  background-image: url(../img/留言.png);
   background-repeat: no-repeat;
   background-size: 30px 30px;
   background-position: center center;
@@ -114,7 +114,7 @@
 .main .left .tab .tab-friend {
   height: 100%;
   width: 50%;
-  background-image: url(../img/用户-角色-用户名-单人_jurassic.png);
+  background-image: url(../img/用户.png);
   background-repeat: no-repeat;
   background-size: 30px 30px;
   background-position: center center;
@@ -153,6 +153,72 @@
   display: none;
 }
 
+/* 隐藏滚动条 */
 ::-webkit-scrollbar {
   display: none;
+}
+
+.main .right .title {
+  height: 50px;
+  line-height: 50px;
+  font-size: 20px;
+  text-align: center;
+  border-bottom: 1px solid rgb(200, 200, 200);
+}
+
+.main .right .message-show {
+  height: 550px;
+  border-top: 1px solid rgb(200, 200, 200);
+  border-bottom: 1px solid rgb(200, 200, 200);
+  overflow: auto;
+}
+
+.main .right .message-show .message {
+  margin-top: 10px;
+  display: flex;
+}
+
+.main .right .message-show .message-left {
+  justify-content: flex-start;
+}
+
+.main .right .message-show .message-right {
+  justify-content: flex-end;
+}
+
+.main .right .message-show .message .box {
+  width: 500px;
+}
+
+.main .right .message-show .message .box h4 {
+  font-weight: normal;
+  height: 20px;
+  line-height: 20px;
+  font-size: 16px;
+}
+
+.main .right .message-show .message .box p {
+  padding: 20px;
+  border-radius: 10px;
+}
+
+.main .right .message-show .message-left .box p {
+  background-color: white;
+}
+
+.main .right .message-show .message-right .box p {
+  background-color: rgb(150, 220, 130);
+}
+
+.main .right .message-input {
+  display: block;
+  width: 100%;
+  height: 100px;
+  border: none;
+  outline: none;
+
+  margin-top: 5px;
+  background-color: rgb(238, 238, 238);
+  padding: 10px;
+  resize: none;
 }
