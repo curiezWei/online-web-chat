@@ -217,8 +217,26 @@
   border: none;
   outline: none;
 
-  margin-top: 5px;
+  margin-top: 2px;
   background-color: rgb(238, 238, 238);
   padding: 10px;
   resize: none;
+}
+
+.main .right .ctrl {
+  height: 35px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.main .right .ctrl button {
+  height: 35px;
+  width: 100px;
+  background-color: white;
+  border: 1px solid rgb(200, 200, 200);
+  border-radius: 5px;
+}
+
+.main .right .ctrl button:active {
+  background-color: rgb(200, 200, 200);
 }
