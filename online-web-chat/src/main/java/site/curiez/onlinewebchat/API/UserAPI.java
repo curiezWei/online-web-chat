@@ -5,6 +5,7 @@ import jakarta.servlet.http.HttpSession;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 import site.curiez.onlinewebchat.mapper.UserMapper;
@@ -47,6 +48,22 @@ public class UserAPI {
             user = new User();
             log.info("注册失败！userName:" + user.getUserName());
         }
+        return user;
+    }
+
+    @GetMapping("/userInfo")
+    public User getUserInfo(HttpServletRequest request) {
+        HttpSession session = request.getSession(false);
+        if(session == null) {
+            log.info("[getUserInfo]当前获取不到session对象");
+            return new User();
+        }
+        User user = (User) session.getAttribute("user");
+        if(user==null) {
+            log.info("[getUserInfo]当前获取不到session对象");
+            return new User();
+        }
+        user.setPassword("");
         return user;
     }
 }
