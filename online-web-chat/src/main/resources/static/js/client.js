@@ -51,6 +51,10 @@ function getFriendList() {
         li.innerHTML = "<h4>" + friend.friendName + "</h4>";
         li.setAttribute("friend-id", friend.friendId);
         friendListUL.appendChild(li);
+
+        li.onclick = function () {
+          clickFriend(friend);
+        };
       }
     },
     error: function () {
@@ -69,6 +73,9 @@ function getSessionList() {
       let sessionlistUL = document.querySelector("#session-list");
       sessionlistUL.innerHTML = "";
       for (let session of result) {
+        if (session.lastMessage.length > 10) {
+          session.lastMessage = session.lastMessage.substring(0, 10) + "...";
+        }
         let li = document.createElement("li");
         li.setAttribute("message-session-id", session.sessionId);
         li.innerHTML =
@@ -78,8 +85,53 @@ function getSessionList() {
           "<p>" +
           session.lastMessage +
           "</p>";
+        sessionlistUL.appendChild(li);
+        li.onclick = function () {
+          clickSession(li);
+        };
       }
     },
   });
 }
+
 getSessionList();
+
+function clickSession(currentLi) {
+  let allLis = document.querySelectorAll("#session-list>li");
+  activeSession(allLis, currentLi);
+  let sessionId = currentLi.getAttribute("message-session-id");
+  getHistoryMessage(sessionId);
+}
+
+function activeSession(allLis, currentLi) {
+  for (let li of allLis) {
+    if (li == currentLi) {
+      li.className = "selected";
+    } else {
+      li.className = "";
+    }
+  }
+}
+
+function getHistoryMessage(sessionId) {}
+
+function clickFriend(friend) {
+  let sessionLi = findSessionByName(friend.friendName);
+  let sessionListUL = document.querySelector("#session-list");
+  if (sessionLi) {
+    sessionListUL.insertBefore(sessionLi, sessionListUL.children[0]);
+    clickSession(sessionLi);
+  } else {
+  }
+}
+
+function findSessionByName(userName) {
+  let sessionLis = document.querySelectorAll("#session-list>li");
+  for (let sessionLi of sessionLis) {
+    let h3 = sessionLi.querySelector("h3");
+    if (h3.innerHTML == userName) {
+      return sessionLi;
+    }
+  }
+  return null;
+}
