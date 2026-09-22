@@ -12,4 +12,12 @@ order by last_time desc
 select user_id as friend_id,user_name as friend_name from user where user_id in
 (select user_id from message_session_user where session_id = #{sessionId} and user_id != #{selfUserId})
     </select>
+
+    <insert id="addMessageSession" useGeneratedKeys="true" keyProperty="sessionId">
+        insert into message_session values (null,now())
+    </insert>
+
+    <insert id="addMessageSessionUser">
+        insert into message_session_user values (#{sessionId},#{userId})
+    </insert>
 </mapper>

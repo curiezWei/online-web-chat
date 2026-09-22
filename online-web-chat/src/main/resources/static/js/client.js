@@ -113,7 +113,16 @@ function activeSession(allLis, currentLi) {
   }
 }
 
-function getHistoryMessage(sessionId) {}
+function getHistoryMessage(sessionId) {
+  let titleDiv = document.querySelector(".right .title");
+  titleDiv.innerHTML = "";
+  let messageShowDiv = document.querySelector(".right .message-show");
+  messageShowDiv.innerHTML = "";
+  let selectedH3 = document.querySelector("#session-list .selected>h3");
+  if (selectedH3) {
+    titleDiv.innerHTML = selectedH3.innerHTML;
+  }
+}
 
 function clickFriend(friend) {
   let sessionLi = findSessionByName(friend.friendName);
@@ -122,7 +131,19 @@ function clickFriend(friend) {
     sessionListUL.insertBefore(sessionLi, sessionListUL.children[0]);
     clickSession(sessionLi);
   } else {
+    sessionLi = document.createElement("li");
+    sessionLi.innerHTML = "<h3>" + friend.friendName + "</h3>" + "<p></p>";
+    sessionListUL.insertBefore(sessionLi, sessionListUL.children[0]);
+    sessionLi.onclick = function () {
+      clickSession(sessionLi);
+    };
+    sessionLi.click();
+
+    createSession(friend.friendId, sessionLi);
   }
+
+  let tabSession = document.querySelector(".tab .tab-session");
+  tabSession.click();
 }
 
 function findSessionByName(userName) {
@@ -134,4 +155,15 @@ function findSessionByName(userName) {
     }
   }
   return null;
+}
+
+function createSession(friendId, sessionLi) {
+  $.ajax({
+    type: "post",
+    url: "session?toUserId=" + friendId,
+    success: function (result) {
+      setAttribute("message-session-id", result.sessionId);
+    },
+    error: function () {},
+  });
 }

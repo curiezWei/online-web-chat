@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="site.curiez.onlinewebchat.mapper.MessageMapper">
+    <select id="getLastMessageBySessionId" resultType="java.lang.String">
+        select content from message where session_id = #{sessionId} order by post_time desc limit 1
+    </select>
+
+    <select id="getMessagesBySessionId" resultType="site.curiez.onlinewebchat.model.Message">
+        select message_id,from_id,user_name,session_id,content
+        from user,message
+        where user.user_id = message.from_id and message.session_id = #{sessionId}
+        order by post_time desc limit 100
+    </select>
+
+</mapper>
