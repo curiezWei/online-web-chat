@@ -122,6 +122,43 @@ function getHistoryMessage(sessionId) {
   if (selectedH3) {
     titleDiv.innerHTML = selectedH3.innerHTML;
   }
+
+  $.ajax({
+    type: "get",
+    url: "/message?sessionId=" + sessionId,
+    success: function (result) {
+      for (let message of result) {
+        addMessage(messageShowDiv, message);
+      }
+      scrollBottom(messageShowDiv);
+    },
+  });
+}
+
+function addMessage(messageShowDiv, message) {
+  let messageDiv = document.createElement("div");
+  let selfUserName = document.querySelector(".left .user").innerHTML;
+  if (selfUserName == message.fromName) {
+    messageDiv.className = "message message-right";
+  } else {
+    messageDiv.className = "message message-left";
+  }
+  messageDiv.innerHTML =
+    '<div class="box">' +
+    "<h4>" +
+    message.fromName +
+    "</h4>" +
+    "<p>" +
+    message.content +
+    "</p>" +
+    "</div>";
+  messageShowDiv.appendChild(messageDiv);
+}
+
+function scrollBottom(element) {
+  let clientHeight = element.offsetHeight;
+  let scrollHeight = element.scrollHeight;
+  element.scrollTo(0, scrollHeight - clientHeight);
 }
 
 function clickFriend(friend) {

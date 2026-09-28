@@ -7,7 +7,7 @@
     </select>
 
     <select id="getMessagesBySessionId" resultType="site.curiez.onlinewebchat.model.Message">
-        select message_id,from_id,user_name,session_id,content
+        select message_id,from_id,user_name as fromName,session_id,content
         from user,message
         where user.user_id = message.from_id and message.session_id = #{sessionId}
         order by post_time desc limit 100
