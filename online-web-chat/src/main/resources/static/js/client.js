@@ -20,6 +20,45 @@ function initSwitchTab() {
 
 initSwitchTab();
 
+let webSocket = new WebSocket("ws://127.0.0.1:8080/message");
+webSocket.onopen = function () {
+  console.log("WebSocket连接成功");
+};
+webSocket.onmessage = function (e) {
+  console.log("WebSocket收到消息" + e.data);
+};
+webSocket.onclose = function () {
+  console.log("WebSocket断开连接");
+};
+webSocket.onerror = function () {
+  console.log("WebSocket连接异常");
+};
+
+function initSendButton() {
+  let sendButton = document.querySelector(".right .ctrl button");
+  let messageInput = document.querySelector(".right .message-input");
+  sendButton.onclick = function () {
+    if (!messageInput.value) {
+      return;
+    }
+    let selectedLi = document.querySelector("#session-list .selected");
+    if (selectedLi == null) {
+      return;
+    }
+    let sessionId = selectedLi.getAttribute("message-session-id");
+    let request = {
+      type: "message",
+      sessionId: sessionId,
+      content: messageInput.value,
+    };
+    request = JSON.stringify(request);
+    webSocket.send(request);
+    messageInput.value = "";
+  };
+}
+
+initSendButton();
+
 function getUserInfo() {
   $.ajax({
     type: "get",
