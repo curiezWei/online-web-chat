@@ -13,4 +13,9 @@
         order by post_time desc limit 100
     </select>
 
+    <insert id="add">
+        insert into message
+        values (null,#{fromId},#{sessionId},#{content},now())
+    </insert>
+
 </mapper>

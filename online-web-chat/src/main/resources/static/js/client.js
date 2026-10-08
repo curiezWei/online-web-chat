@@ -20,12 +20,19 @@ function initSwitchTab() {
 
 initSwitchTab();
 
-let webSocket = new WebSocket("ws://127.0.0.1:8080/message");
+let webSocket = new WebSocket("ws://127.0.0.1:8080/WebSocketMessage");
 webSocket.onopen = function () {
   console.log("WebSocket连接成功");
 };
 webSocket.onmessage = function (e) {
   console.log("WebSocket收到消息" + e.data);
+
+  let response = JSON.parse(e.data);
+  if (response.type == "message") {
+    handleMessage(response);
+  } else {
+    console.log("类型不符合");
+  }
 };
 webSocket.onclose = function () {
   console.log("WebSocket断开连接");
@@ -33,6 +40,45 @@ webSocket.onclose = function () {
 webSocket.onerror = function () {
   console.log("WebSocket连接异常");
 };
+
+function handleMessage(response) {
+  let curSessionLi = findSessionLi(response.sessionId);
+  if (curSessionLi == null) {
+    curSessionLi = document.createElement("li");
+    curSessionLi.setAttribute("message-session-id", response.sessionId);
+    curSessionLi.innerHTML = "<h3>" + response.fromName + "</h3>" + "<p></p>";
+    curSessionLi.onclick = function () {
+      clickSession(curSessionLi);
+    };
+  }
+
+  let p = curSessionLi.querySelector("p");
+  p.innerHTML = response.content;
+  if (p.innerHTML.length > 10) {
+    p.innerHTML = p.innerHTML.substring(0, 10) + "...";
+  }
+
+  let sessionListUL = document.querySelector("#session-list");
+  sessionListUL.insertBefore(curSessionLi, sessionListUL.children[0]);
+
+  if (curSessionLi.className == "selected") {
+    let messageShowDiv = document.querySelector(".right .message-show");
+
+    addMessage(messageShowDiv, response);
+    scrollBottom(messageShowDiv);
+  }
+}
+
+function findSessionLi(targetSessionId) {
+  let sessionLis = document.querySelectorAll("#session-list li");
+  for (let li of sessionLis) {
+    let sessionId = li.getAttribute("message-session-id");
+    if (sessionId == targetSessionId) {
+      return li;
+    }
+  }
+  return null;
+}
 
 function initSendButton() {
   let sendButton = document.querySelector(".right .ctrl button");
