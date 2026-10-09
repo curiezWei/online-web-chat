@@ -1,3 +1,17 @@
+.cover {
+  width: 100%;
+  height: 100%;
+  background-image: url(../img/wallpaper.jpg);
+  background-size: cover;
+  background-position: center center;
+  background-repeat: no-repeat;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 1;
+  filter: blur(20px);
+}
+
 .client-container {
   display: flex;
   height: 100%;
@@ -9,131 +23,214 @@
 .main {
   width: 1000px;
   height: 740px;
-  background-color: rgb(238, 238, 238);
-  border-radius: 5px;
+  background-color: #fff;
+  border-radius: 12px;
   display: flex;
+  overflow: hidden;
   z-index: 2;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.35);
 }
 
+/* ============ 左栏 ============ */
 .main .left {
   width: 280px;
   height: 100%;
-  background-color: rgb(50, 50, 50);
-  border-top-left-radius: 5px;
-  border-bottom-left-radius: 5px;
-}
-
-.main .right {
-  width: 720px;
-  height: 100%;
-  background-color: rgb(238, 238, 238);
-  padding: 0 20px;
-}
-
-.cover {
-  width: 100%;
-  height: 100%;
-
-  background-image: url(../img/wallpaper.jpg);
-  background-size: cover;
-  background-position: center center;
-  background-repeat: no-repeat;
-
-  /* 为了让背景图片覆盖整个容器 */
-  position: absolute;
-  top: 0;
-  left: 0;
-
-  z-index: 1;
-  filter: blur(20px);
+  background-color: #2b2d31;
+  display: flex;
+  flex-direction: column;
 }
 
 .main .left .user {
   height: 80px;
-  line-height: 80px;
-  color: white;
-  font-size: 20px;
+  flex: 0 0 80px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
   padding: 0 20px;
+  color: #fff;
+  font-size: 18px;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+}
+
+.avatar {
+  width: 32px;
+  height: 32px;
+  flex: 0 0 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1;
+  overflow: hidden;
+  white-space: nowrap;
+  user-select: none;
+}
+
+.main .left .user .avatar {
+  width: 42px;
+  height: 42px;
+  flex: 0 0 42px;
+  font-size: 18px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+}
+
+.main .left .user .user-name {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
 
 .main .left .search {
-  height: 40px;
-  padding: 0 20px;
+  height: 48px;
+  flex: 0 0 48px;
+  padding: 0 16px;
   display: flex;
-  justify-content: center;
   align-items: center;
 }
 
 .main .left .search input {
-  width: 200px;
-  height: 40px;
-  line-height: 30px;
+  flex: 1;
+  height: 36px;
+  line-height: 36px;
   font-size: 14px;
-  color: white;
-  background-color: rgb(100, 100, 100);
-  border: none;
+  color: #fff;
+  background-color: #3a3d43;
+  border: 1px solid transparent;
   outline: none;
-  padding-left: 10px;
-  border-top-left-radius: 5px;
-  border-bottom-left-radius: 5px;
+  padding-left: 14px;
+  border-radius: 8px 0 0 8px;
+  transition: background-color 0.2s, border-color 0.2s;
+}
+
+.main .left .search input::placeholder {
+  color: #9aa0a6;
+}
+
+.main .left .search input:focus {
+  background-color: #44474e;
+  border-color: #4f7cff;
+  border-right-color: transparent;
 }
 
 .main .left .search button {
   width: 40px;
-  height: 40px;
+  height: 36px;
   border: none;
   outline: none;
-  background-color: rgb(100, 100, 100);
-  border-top-right-radius: 5px;
-  border-bottom-right-radius: 5px;
-  background-image: url(../img/查找用户.png);
-  background-repeat: no-repeat;
-  background-size: 20px 20px;
-  background-position: center center;
+  background-color: #3a3d43;
+  border-radius: 0 8px 8px 0;
+  color: #c7cbd1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background-color 0.2s, color 0.2s;
+}
+
+.main .left .search button svg {
+  width: 18px;
+  height: 18px;
+}
+
+.main .left .search button:hover {
+  background-color: #4f7cff;
+  color: #fff;
 }
 
 .main .left .search button:active {
-  background-color: rgb(200, 200, 200);
+  background-color: #3f66d6;
 }
 
 .main .left .tab {
-  height: 50px;
+  height: 60px;
+  flex: 0 0 60px;
   display: flex;
-  align-items: center;
+  align-items: stretch;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
 }
 
-.main .left .tab .tab-session {
-  height: 100%;
-  width: 50%;
-  background-image: url(../img/留言.png);
-  background-repeat: no-repeat;
-  background-size: 30px 30px;
-  background-position: center center;
-}
-
+.main .left .tab .tab-session,
 .main .left .tab .tab-friend {
-  height: 100%;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  position: relative;
+  color: #9aa0a6;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.main .left .tab .tab-session svg,
+.main .left .tab .tab-friend svg {
+  width: 22px;
+  height: 22px;
+}
+
+.main .left .tab .tab-session span,
+.main .left .tab .tab-friend span {
+  font-size: 12px;
+}
+
+.main .left .tab .tab-session:hover,
+.main .left .tab .tab-friend:hover {
+  color: #d7dbe0;
+}
+
+.main .left .tab .tab-session.active,
+.main .left .tab .tab-friend.active {
+  color: #6d97ff;
+}
+
+.main .left .tab .tab-session.active::after,
+.main .left .tab .tab-friend.active::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 25%;
   width: 50%;
-  background-image: url(../img/用户.png);
-  background-repeat: no-repeat;
-  background-size: 30px 30px;
-  background-position: center center;
+  height: 3px;
+  border-radius: 3px 3px 0 0;
+  background-color: #4f7cff;
 }
 
 .main .left .list {
-  height: 570px;
-  overflow: auto;
+  flex: 1;
+  overflow-y: auto;
+  padding: 6px 8px;
 }
 
 .main .left .list li {
   height: 60px;
-  padding: 10px 20px;
-  color: white;
-  border-top: 1px solid black;
+  padding: 10px 14px;
+  color: #dfe3e8;
+  border-radius: 8px;
+  margin-bottom: 4px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  transition: background-color 0.18s;
+}
+
+.main .left .list li .li-body {
+  flex: 1;
+  min-width: 0;
+}
+
+.main .left .list li:hover {
+  background-color: #37393f;
 }
 
 .main .left .list .selected {
-  background-color: rgb(91, 91, 91);
+  background-color: #4f7cff;
+  color: #fff;
 }
 
 .main .left .list li h3,
@@ -141,12 +238,29 @@
   height: 20px;
   font-size: 14px;
   line-height: 20px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.main .left .list li p {
+  color: #9aa0a6;
+}
+
+.main .left .list .selected p {
+  color: rgba(255, 255, 255, 0.85);
 }
 
 .main .left .list li h4 {
   height: 40px;
   line-height: 40px;
-  font-size: 20px;
+  font-size: 17px;
+  font-weight: 500;
+}
+
+.main .left .list li#new-friend-entry {
+  color: #7ee0a5;
+  font-weight: 600;
 }
 
 .hide {
@@ -158,24 +272,92 @@
   display: none;
 }
 
+/* ============ 右栏 ============ */
+.main .right {
+  flex: 1;
+  min-width: 0;
+  height: 100%;
+  background-color: #f7f8fa;
+  padding: 0 24px;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+.mobile-back {
+  display: none;
+  position: absolute;
+  top: 13px;
+  left: 0;
+  width: 36px;
+  height: 36px;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  background: transparent;
+  color: #4f7cff;
+  cursor: pointer;
+  z-index: 3;
+  padding: 0;
+}
+
+.mobile-back svg {
+  width: 24px;
+  height: 24px;
+}
+
 .main .right .title {
-  height: 50px;
-  line-height: 50px;
-  font-size: 20px;
+  height: 60px;
+  flex: 0 0 60px;
+  line-height: 60px;
+  font-size: 18px;
+  font-weight: 600;
   text-align: center;
-  border-bottom: 1px solid rgb(200, 200, 200);
+  color: #1d1d1f;
+  border-bottom: 1px solid #e5e7eb;
+  position: relative;
+}
+
+.main .right .title .delete-friend-btn {
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  height: 32px;
+  padding: 0 14px;
+  border: 1px solid #f0b4b4;
+  border-radius: 8px;
+  background-color: #fff;
+  color: #d9534f;
+  font-size: 13px;
+  cursor: pointer;
+  transition: background-color 0.18s, color 0.18s;
+}
+
+.main .right .title .delete-friend-btn:hover {
+  background-color: #d9534f;
+  color: #fff;
 }
 
 .main .right .message-show {
-  height: 550px;
-  border-top: 1px solid rgb(200, 200, 200);
-  border-bottom: 1px solid rgb(200, 200, 200);
-  overflow: auto;
+  flex: 1;
+  overflow-y: auto;
+  padding: 12px 4px;
 }
 
 .main .right .message-show .message {
-  margin-top: 10px;
+  margin-top: 12px;
   display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.main .right .message-show .message .avatar {
+  width: 34px;
+  height: 34px;
+  flex: 0 0 34px;
+  font-size: 14px;
+  margin-top: 22px;
 }
 
 .main .right .message-show .message-left {
@@ -183,60 +365,218 @@
 }
 
 .main .right .message-show .message-right {
-  justify-content: flex-end;
+  flex-direction: row-reverse;
+  justify-content: flex-start;
 }
 
 .main .right .message-show .message .box {
-  width: 500px;
+  max-width: 70%;
 }
 
 .main .right .message-show .message .box h4 {
-  font-weight: normal;
-  height: 20px;
-  line-height: 20px;
-  font-size: 16px;
+  font-weight: 400;
+  height: 18px;
+  line-height: 18px;
+  font-size: 12px;
+  color: #8a8f98;
+  margin-bottom: 4px;
+}
+
+.main .right .message-show .message-right .box h4 {
+  text-align: right;
 }
 
 .main .right .message-show .message .box p {
-  padding: 20px;
-  border-radius: 10px;
+  padding: 10px 14px;
+  border-radius: 12px;
+  font-size: 14px;
+  line-height: 1.5;
+  word-break: break-word;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06);
 }
 
 .main .right .message-show .message-left .box p {
-  background-color: white;
+  background-color: #fff;
+  border-top-left-radius: 4px;
 }
 
 .main .right .message-show .message-right .box p {
-  background-color: rgb(150, 220, 130);
+  background-color: #4f7cff;
+  color: #fff;
+  border-top-right-radius: 4px;
 }
 
 .main .right .message-input {
+  flex: 0 0 100px;
   display: block;
   width: 100%;
-  height: 100px;
-  border: none;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
   outline: none;
-
-  margin-top: 2px;
-  background-color: rgb(238, 238, 238);
-  padding: 10px;
+  margin: 8px 0;
+  background-color: #fff;
+  padding: 12px 14px;
   resize: none;
+  font-size: 14px;
+  font-family: inherit;
+  color: #1d1d1f;
+  transition: border-color 0.2s;
+}
+
+.main .right .message-input::placeholder {
+  color: #a9aeb6;
+}
+
+.main .right .message-input:focus {
+  border-color: #4f7cff;
 }
 
 .main .right .ctrl {
-  height: 35px;
+  height: 48px;
+  flex: 0 0 48px;
   display: flex;
   justify-content: flex-end;
+  align-items: center;
+  padding-bottom: 10px;
 }
 
 .main .right .ctrl button {
-  height: 35px;
+  height: 36px;
   width: 100px;
-  background-color: white;
-  border: 1px solid rgb(200, 200, 200);
-  border-radius: 5px;
+  background-color: #4f7cff;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.18s;
+}
+
+.main .right .ctrl button:hover {
+  background-color: #3f66d6;
 }
 
 .main .right .ctrl button:active {
-  background-color: rgb(200, 200, 200);
+  background-color: #3455bb;
+}
+
+/* ============ 搜索结果 / 好友申请气泡 ============ */
+.main .right .message-show .message-search {
+  margin-top: 12px;
+  display: flex;
+  justify-content: center;
+}
+
+.main .right .message-show .message-search .search-box {
+  background-color: #fff;
+  border-radius: 12px;
+  padding: 16px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 220px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+.main .right .message-show .message-search .search-box .avatar {
+  width: 32px;
+  height: 32px;
+  flex: 0 0 32px;
+  font-size: 14px;
+  margin-right: 10px;
+}
+
+.main .right .message-show .message-search .search-box span:not(.avatar) {
+  font-size: 15px;
+  color: #1d1d1f;
+  margin-right: 20px;
+}
+
+.main .right .message-show .message-search .search-box button {
+  border: 1px solid #4f7cff;
+  border-radius: 8px;
+  background-color: #fff;
+  color: #4f7cff;
+  padding: 6px 14px;
+  margin-left: 8px;
+  font-size: 13px;
+  cursor: pointer;
+  transition: background-color 0.18s, color 0.18s;
+}
+
+.main .right .message-show .message-search .search-box button:hover {
+  background-color: #4f7cff;
+  color: #fff;
+}
+
+.main .right .message-show .message-search .search-box button:active {
+  background-color: #3f66d6;
+}
+
+.main .right .message-show .message-search .search-box button:disabled {
+  border-color: #d5d8dd;
+  color: #a9aeb6;
+  cursor: default;
+  background-color: #f2f3f5;
+}
+
+.main .right .message-show .search-empty {
+  color: #a9aeb6;
+  font-size: 14px;
+}
+
+/* ============ 移动端适配 ============ */
+@media (max-width: 820px) {
+  .client-container {
+    padding: 0;
+  }
+
+  .main {
+    width: 100%;
+    height: 100%;
+    border-radius: 0;
+    box-shadow: none;
+  }
+
+  .main .left {
+    width: 100%;
+  }
+
+  .main .right {
+    display: none;
+    padding: 0 16px env(safe-area-inset-bottom);
+  }
+
+  .main.show-chat .left {
+    display: none;
+  }
+
+  .main.show-chat .right {
+    display: flex;
+  }
+
+  .mobile-back {
+    display: flex;
+  }
+
+  .main .right .title {
+    padding: 0 34px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+
+  .main .right .title .delete-friend-btn {
+    right: 0;
+  }
+
+  .main .right .message-input {
+    flex: 0 0 76px;
+  }
+
+  /* 避免 iOS 聚焦输入框时自动放大页面 */
+  .main .left .search input,
+  .main .right .message-input {
+    font-size: 16px;
+  }
 }

@@ -6,6 +6,12 @@
         select * from user where user_name = #{userName}
     </select>
 
+    <select id="searchByName" resultType="site.curiez.onlinewebchat.model.User">
+        select user_id, user_name from user
+        where user_name like concat('%', #{keyword}, '%')
+        and user_id != #{selfId}
+    </select>
+
     <insert id="insert" useGeneratedKeys="true" keyProperty="userId">
         insert into user values (null,#{userName},#{password})
     </insert>

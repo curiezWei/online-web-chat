@@ -16,4 +16,10 @@ public interface MessageSessionMapper {
     int addMessageSession(MessageSession messageSession);
 
     void addMessageSessionUser(MessageSessionUserItem messageSessionUserItem);
+
+    List<Integer> getSessionUserIds(int sessionId);
+
+    int deleteSessionUsers(int sessionId);
+
+    int deleteSession(int sessionId);
 }

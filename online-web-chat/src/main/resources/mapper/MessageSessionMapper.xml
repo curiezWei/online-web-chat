@@ -20,4 +20,16 @@ select user_id as friend_id,user_name as friend_name from user where user_id in
     <insert id="addMessageSessionUser">
         insert into message_session_user values (#{sessionId},#{userId})
     </insert>
+
+    <select id="getSessionUserIds" resultType="java.lang.Integer">
+        select user_id from message_session_user where session_id = #{sessionId}
+    </select>
+
+    <delete id="deleteSessionUsers">
+        delete from message_session_user where session_id = #{sessionId}
+    </delete>
+
+    <delete id="deleteSession">
+        delete from message_session where session_id = #{sessionId}
+    </delete>
 </mapper>

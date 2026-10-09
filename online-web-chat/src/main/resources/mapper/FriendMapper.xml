@@ -6,4 +6,18 @@
 select user_id as friend_id , user_name as friend_name from user where user_id in
 (select friend_id from friend where user_id = #{userId})
     </select>
+
+    <insert id="addFriend">
+        insert into friend (user_id, friend_id) values (#{userId}, #{friendId})
+    </insert>
+
+    <select id="checkFriend" resultType="int">
+        select count(*) from friend where user_id = #{userId} and friend_id = #{friendId}
+    </select>
+
+    <delete id="deleteFriend">
+        delete from friend
+        where (user_id = #{userId} and friend_id = #{friendId})
+        or (user_id = #{friendId} and friend_id = #{userId})
+    </delete>
 </mapper>

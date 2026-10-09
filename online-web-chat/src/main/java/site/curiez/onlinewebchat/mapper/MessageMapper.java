@@ -13,4 +13,6 @@ public interface MessageMapper {
     List<Message> getMessagesBySessionId(int sessionId);
 
     void add(Message message);
+
+    int deleteBySessionId(int sessionId);
 }

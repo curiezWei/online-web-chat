@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="site.curiez.onlinewebchat.mapper.FriendRequestMapper">
+    <insert id="add">
+        insert into friend_request (from_id, to_id) values (#{fromId}, #{toId})
+    </insert>
+
+    <select id="selectByToId" resultType="site.curiez.onlinewebchat.model.FriendRequest">
+        select r.request_id, r.from_id, u.user_name as from_name
+        from friend_request r, user u
+        where r.from_id = u.user_id and r.to_id = #{toId}
+        order by r.request_time desc
+    </select>
+
+    <select id="selectById" resultType="site.curiez.onlinewebchat.model.FriendRequest">
+        select request_id, from_id, to_id from friend_request where request_id = #{requestId}
+    </select>
+
+    <delete id="deleteById">
+        delete from friend_request where request_id = #{requestId}
+    </delete>
+</mapper>

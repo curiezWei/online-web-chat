@@ -18,6 +18,7 @@ public class UserAPI {
     @Autowired
     private UserMapper userMapper;
 
+    private final static String registerKey = "curiez";
 
     @PostMapping("/login")
     public User login(String userName, String password, HttpServletRequest request) {
@@ -35,8 +36,12 @@ public class UserAPI {
     }
 
     @PostMapping("register")
-    public User register(String userName, String password) {
+    public User register(String userName, String password, String key) {
         User user = null;
+        if (!registerKey.equals(key)) {
+            log.info("注册失败！注册通行证不正确！");
+            return new User();
+        }
         try {
             user = new User();
             user.setUserName(userName);

@@ -30,6 +30,9 @@
         <div class="input-group">
           <input type="password" id="passwordConfirm" placeholder="确认密码" autocomplete="new-password" />
         </div>
+        <div class="input-group">
+          <input type="password" id="registerKey" placeholder="注册通行证" autocomplete="off" />
+        </div>
         <button id="submit" class="register-btn">注册</button>
         <p class="switch-link">
           已有账号？<a href="login.html">去登录</a>
@@ -44,6 +47,7 @@
         let userName = document.querySelector('#userName').value;
         let password = document.querySelector('#password').value;
         let passwordConfirm = document.querySelector('#passwordConfirm').value;
+        let registerKey = document.querySelector('#registerKey').value;
         if (userName == '' || password == '') {
           alert("请填写用户名和密码！");
           return;
@@ -52,13 +56,18 @@
           alert("两次输入的密码不一致！");
           return;
         }
+        if (registerKey == '') {
+          alert("请填写注册通行证！");
+          return;
+        }
 
         $.ajax({
           url: "/register",
           type: "post",
           data: {
             userName: userName,
-            password: password
+            password: password,
+            key: registerKey
           },
           success: function (result) {
             if (result && result.userId > 0) {

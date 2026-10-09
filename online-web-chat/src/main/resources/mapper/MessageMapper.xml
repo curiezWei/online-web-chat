@@ -18,4 +18,8 @@
         values (null,#{fromId},#{sessionId},#{content},now())
     </insert>
 
+    <delete id="deleteBySessionId">
+        delete from message where session_id = #{sessionId}
+    </delete>
+
 </mapper>
