@@ -8,7 +8,7 @@ import java.util.List;
 @Mapper
 public interface MessageMapper {
 
-    String getLastMessageBySessionId(int sessionId);
+    Message getLastMessageBySessionId(int sessionId);
 
     List<Message> getMessagesBySessionId(int sessionId);
 

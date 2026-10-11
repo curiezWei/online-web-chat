@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.WebSocketSession;
 
+import java.io.IOException;
 import java.util.concurrent.ConcurrentHashMap;
 @Slf4j
 @Component
@@ -12,11 +13,14 @@ public class OnlineUserManager {
     private ConcurrentHashMap<Integer,WebSocketSession> sessions = new ConcurrentHashMap<>();
 
     public void online(int userId, WebSocketSession session){
-        if(sessions.get(userId) != null) {
-            log.info("用户id："+userId+" 在其他地方登录了");
-            return ;
+        WebSocketSession oldSession = sessions.put(userId, session);
+        if(oldSession != null && oldSession != session && oldSession.isOpen()) {
+            try {
+                oldSession.close();
+            } catch (IOException e) {
+                log.warn("关闭旧连接失败，userId：" + userId, e);
+            }
         }
-        sessions.put(userId,session);
         log.info("用户id："+userId+" 上线");
     }
 
@@ -30,5 +34,9 @@ public class OnlineUserManager {
 
     public WebSocketSession getWebSocketSession(int userId) {
         return sessions.get(userId);
+    }
+
+    public boolean isOnline(int userId) {
+        return sessions.containsKey(userId);
     }
 }

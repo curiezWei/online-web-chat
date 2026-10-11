@@ -1,15 +1,20 @@
 package site.curiez.onlinewebchat.API;
 
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpSession;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
+import site.curiez.onlinewebchat.component.OnlineUserManager;
 import site.curiez.onlinewebchat.mapper.UserMapper;
+import site.curiez.onlinewebchat.model.Result;
 import site.curiez.onlinewebchat.model.User;
+import site.curiez.onlinewebchat.utils.JwtUtils;
+
+import java.util.HashMap;
+import java.util.Map;
 
 @Slf4j
 @RestController
@@ -18,57 +23,57 @@ public class UserAPI {
     @Autowired
     private UserMapper userMapper;
 
+    @Autowired
+    private OnlineUserManager onlineUserManager;
+
     private final static String registerKey = "curiez";
 
     @PostMapping("/login")
-    public User login(String userName, String password, HttpServletRequest request) {
+    public Result<String> login(String userName, String password) {
         User user = userMapper.selectByName(userName);
         if (user == null || !user.getPassword().equals(password)) {
-            user.setPassword("");
-            log.info("登录失败！用户名或密码错误！" + user);
-            return new User();
+            log.info("登录失败！用户名或密码错误！");
+            return Result.fail("用户名或密码错误");
         }
-        HttpSession session = request.getSession(true);
-        session.setAttribute("user", user);
-        user.setPassword("");
+        if (onlineUserManager.isOnline(user.getUserId())) {
+            log.info("登录失败！该账号已在其他地方登录，userId:" + user.getUserId());
+            return Result.fail("该账号已在其他地方登录");
+        }
+        Map<String, Object> claim = new HashMap<>();
+        claim.put("userId", user.getUserId());
+        claim.put("userName", user.getUserName());
+        String token = JwtUtils.getJwtToken(claim);
         log.info("登录成功！");
-        return user;
+        return Result.success(token);
     }
 
     @PostMapping("register")
-    public User register(String userName, String password, String key) {
-        User user = null;
+    public Result<User> register(String userName, String password, String key) {
         if (!registerKey.equals(key)) {
             log.info("注册失败！注册通行证不正确！");
-            return new User();
+            return Result.fail("注册通行证不正确");
         }
         try {
-            user = new User();
+            User user = new User();
             user.setUserName(userName);
             user.setPassword(password);
             int result = userMapper.insert(user);
             log.info("注册成功，改变行数:" + result + "，uid:" + user.getUserId());
             user.setPassword("");
+            return Result.success(user);
         } catch (DuplicateKeyException e) {
-            user = new User();
-            log.info("注册失败！userName:" + user.getUserName());
+            log.info("注册失败！userName:" + userName);
+            return Result.fail("用户名已被占用");
         }
-        return user;
     }
 
     @GetMapping("/userInfo")
-    public User getUserInfo(HttpServletRequest request) {
-        HttpSession session = request.getSession(false);
-        if(session == null) {
-            log.info("[getUserInfo]当前获取不到session对象");
-            return new User();
+    public Result<User> getUserInfo(HttpServletRequest request) {
+        User user = JwtUtils.getUser(request);
+        if (user == null) {
+            log.info("[getUserInfo]无效或缺失的 token");
+            return Result.fail("未登录");
         }
-        User user = (User) session.getAttribute("user");
-        if(user==null) {
-            log.info("[getUserInfo]当前获取不到session对象");
-            return new User();
-        }
-        user.setPassword("");
-        return user;
+        return Result.success(user);
     }
 }

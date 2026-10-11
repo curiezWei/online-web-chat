@@ -1,4 +1,4 @@
-package site.curiez.onlinewebchat.API;
+package site.curiez.onlinewebchat.component;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,18 +7,19 @@ import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
-import site.curiez.onlinewebchat.component.OnlineUserManager;
 import site.curiez.onlinewebchat.mapper.MessageMapper;
 import site.curiez.onlinewebchat.mapper.MessageSessionMapper;
 import site.curiez.onlinewebchat.model.*;
 import tools.jackson.databind.ObjectMapper;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 @Slf4j
 @Component
-public class WebSocketAPI extends TextWebSocketHandler {
+public class WebSocketHandler extends TextWebSocketHandler {
     @Autowired
     private OnlineUserManager onlineUserManager;
 
@@ -57,36 +58,42 @@ public class WebSocketAPI extends TextWebSocketHandler {
     }
 
     private void transferMessage(User fromUser, MessageRequest request) throws IOException {
+        // 先落库，保证消息不丢失
+        Message message = new Message();
+        message.setFromId(fromUser.getUserId());
+        message.setSessionId(request.getSessionId());
+        message.setContent(request.getContent());
+        messageMapper.add(message);
+
         MessageResponse response = new MessageResponse();
-        response.setContent("message");
+        response.setType("message");
         response.setFromName(fromUser.getUserName());
         response.setFromId(fromUser.getUserId());
         response.setSessionId(request.getSessionId());
         response.setContent(request.getContent());
+        response.setPostTime(new SimpleDateFormat("yyyy-MM-dd HH:mm").format(new Date()));
         String responseJson = objectMapper.writeValueAsString(response);
 
         log.info("responseJson:"+responseJson);
 
         List<Friend> friends = messageSessionMapper.getFriendsBySessionId(request.getSessionId(), fromUser.getUserId());
-        Friend myself = new Friend();
-        myself.setFriendId(fromUser.getUserId());
-        myself.setFriendName(fromUser.getUserName());
-        friends.add(myself);
 
         for(Friend friend : friends) {
-            WebSocketSession webSocketSession = onlineUserManager.getWebSocketSession(friend.getFriendId());
-            if(webSocketSession==null) {
+            if(friend.getFriendId() == fromUser.getUserId()) {
                 continue;
             }
-            webSocketSession.sendMessage(new TextMessage(responseJson));
+            WebSocketSession webSocketSession = onlineUserManager.getWebSocketSession(friend.getFriendId());
+            if(webSocketSession == null || !webSocketSession.isOpen()) {
+                continue;
+            }
+            try {
+                synchronized (webSocketSession) {
+                    webSocketSession.sendMessage(new TextMessage(responseJson));
+                }
+            } catch (Exception e) {
+                log.warn("推送消息失败，userId：" + friend.getFriendId(), e);
+            }
         }
-
-        Message message = new Message();
-        message.setFromId(fromUser.getUserId());
-        message.setSessionId(request.getSessionId());
-        message.setContent(request.getContent());
-
-        messageMapper.add(message);
     }
 
     @Override

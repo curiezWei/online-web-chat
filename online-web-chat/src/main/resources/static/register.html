@@ -4,51 +4,265 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>注册</title>
-    <link rel="stylesheet" href="css/common.css" />
-    <link rel="stylesheet" href="css/register.css" />
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        height: 100%;
+        font-family:
+          -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text",
+          "Helvetica Neue", Helvetica, Arial, sans-serif;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        background: #f5f5f7;
+        color: #1d1d1f;
+        overflow-x: hidden;
+        -webkit-text-size-adjust: 100%;
+        text-size-adjust: 100%;
+      }
+
+      .cover {
+        width: 100%;
+        height: 100%;
+        background-image: url(img/wallpaper.jpg);
+        background-size: cover;
+        background-position: center center;
+        background-repeat: no-repeat;
+        position: fixed;
+        top: 0;
+        left: 0;
+        z-index: 1;
+      }
+
+      .register-wrapper {
+        min-height: 100%;
+        position: relative;
+        z-index: 2;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 32px 16px;
+        box-sizing: border-box;
+      }
+
+      .register-card {
+        width: 400px;
+        max-width: 90%;
+        padding: 48px 40px 40px;
+        background: rgba(255, 255, 255, 0.72);
+        backdrop-filter: blur(40px);
+        -webkit-backdrop-filter: blur(40px);
+        border-radius: 24px;
+        box-shadow:
+          0 4px 24px rgba(0, 0, 0, 0.06),
+          0 1px 4px rgba(0, 0, 0, 0.04);
+        text-align: center;
+        animation: fadeIn 0.5s ease-out;
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(12px) scale(0.98);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0) scale(1);
+        }
+      }
+
+      .register-icon {
+        width: 56px;
+        height: 56px;
+        margin: 0 auto 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #30d158, #5e5ce6);
+        color: #fff;
+      }
+
+      .register-icon svg {
+        width: 28px;
+        height: 28px;
+      }
+
+      .register-title {
+        font-size: 26px;
+        font-weight: 600;
+        letter-spacing: -0.02em;
+        color: #1d1d1f;
+        margin-bottom: 4px;
+      }
+
+      .register-subtitle {
+        font-size: 15px;
+        color: #86868b;
+        margin-bottom: 32px;
+      }
+
+      .input-group {
+        margin-bottom: 16px;
+      }
+
+      .input-group input {
+        width: 100%;
+        height: 50px;
+        padding: 0 18px;
+        font-size: 16px;
+        font-family: inherit;
+        color: #1d1d1f;
+        background: #f5f5f7;
+        border: 1.5px solid #d2d2d7;
+        border-radius: 14px;
+        outline: none;
+        transition: all 0.2s ease;
+      }
+
+      .input-group input::placeholder {
+        color: #aeaeb2;
+      }
+
+      .input-group input:focus {
+        border-color: #30d158;
+        background: #fff;
+        box-shadow: 0 0 0 4px rgba(48, 209, 88, 0.12);
+      }
+
+      .register-btn {
+        width: 100%;
+        height: 50px;
+        margin-top: 8px;
+        font-size: 17px;
+        font-weight: 600;
+        font-family: inherit;
+        color: #fff;
+        background: #30d158;
+        border: none;
+        border-radius: 14px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        letter-spacing: 0.02em;
+      }
+
+      .register-btn:hover {
+        background: #34d95d;
+        box-shadow: 0 4px 14px rgba(48, 209, 88, 0.35);
+        transform: translateY(-1px);
+      }
+
+      .register-btn:active {
+        background: #28b84a;
+        transform: translateY(0);
+        box-shadow: none;
+      }
+
+      .switch-link {
+        margin-top: 24px;
+        font-size: 14px;
+        color: #86868b;
+      }
+
+      .switch-link a {
+        color: #30d158;
+        text-decoration: none;
+        font-weight: 500;
+      }
+
+      .switch-link a:hover {
+        text-decoration: underline;
+      }
+
+      @media (max-width: 480px) {
+        .register-card {
+          padding: 36px 24px 28px;
+          border-radius: 20px;
+        }
+
+        .register-title {
+          font-size: 23px;
+        }
+
+        .register-subtitle {
+          margin-bottom: 24px;
+        }
+      }
+    </style>
   </head>
   <body>
     <div class="cover"></div>
     <div class="register-wrapper">
       <div class="register-card">
         <div class="register-icon">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
-            <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
-            <circle cx="8.5" cy="7" r="4"/>
-            <line x1="20" y1="8" x2="20" y2="14"/>
-            <line x1="23" y1="11" x2="17" y2="11"/>
+          <svg
+            width="28"
+            height="28"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.5"
+            stroke-linecap="round"
+          >
+            <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+            <circle cx="8.5" cy="7" r="4" />
+            <line x1="20" y1="8" x2="20" y2="14" />
+            <line x1="23" y1="11" x2="17" y2="11" />
           </svg>
         </div>
         <h2 class="register-title">创建账号</h2>
         <p class="register-subtitle">加入我们，开始聊天</p>
         <div class="input-group">
-          <input type="text" id="userName" placeholder="用户名" autocomplete="username" />
+          <input
+            type="text"
+            id="userName"
+            placeholder="用户名(支持中文)"
+            autocomplete="username"
+          />
         </div>
         <div class="input-group">
-          <input type="password" id="password" placeholder="密码" autocomplete="new-password" />
+          <input
+            type="password"
+            id="password"
+            placeholder="密码"
+            autocomplete="new-password"
+          />
         </div>
         <div class="input-group">
-          <input type="password" id="passwordConfirm" placeholder="确认密码" autocomplete="new-password" />
+          <input
+            type="password"
+            id="passwordConfirm"
+            placeholder="确认密码"
+            autocomplete="new-password"
+          />
         </div>
         <div class="input-group">
-          <input type="password" id="registerKey" placeholder="注册通行证" autocomplete="off" />
+          <input
+            type="password"
+            id="registerKey"
+            placeholder="注册通行证"
+            autocomplete="off"
+          />
         </div>
         <button id="submit" class="register-btn">注册</button>
-        <p class="switch-link">
-          已有账号？<a href="login.html">去登录</a>
-        </p>
+        <p class="switch-link">已有账号？<a href="login.html">去登录</a></p>
       </div>
     </div>
 
-    <script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.7.1/jquery.js"></script>
+    <script src="js/jquery.min.js"></script>
     <script>
-      let submitButton = document.querySelector('#submit');
+      let submitButton = document.querySelector("#submit");
       submitButton.onclick = function () {
-        let userName = document.querySelector('#userName').value;
-        let password = document.querySelector('#password').value;
-        let passwordConfirm = document.querySelector('#passwordConfirm').value;
-        let registerKey = document.querySelector('#registerKey').value;
-        if (userName == '' || password == '') {
+        let userName = document.querySelector("#userName").value;
+        let password = document.querySelector("#password").value;
+        let passwordConfirm = document.querySelector("#passwordConfirm").value;
+        let registerKey = document.querySelector("#registerKey").value;
+        if (userName == "" || password == "") {
           alert("请填写用户名和密码！");
           return;
         }
@@ -56,7 +270,7 @@
           alert("两次输入的密码不一致！");
           return;
         }
-        if (registerKey == '') {
+        if (registerKey == "") {
           alert("请填写注册通行证！");
           return;
         }
@@ -67,18 +281,28 @@
           data: {
             userName: userName,
             password: password,
-            key: registerKey
+            key: registerKey,
           },
           success: function (result) {
-            if (result && result.userId > 0) {
+            if (
+              result &&
+              result.code === "SUCCESS" &&
+              result.data &&
+              result.data.userId > 0
+            ) {
               alert("注册成功！");
               location.href = "login.html";
             } else {
-              alert("注册失败，用户名可能已被占用！");
+              alert(
+                "注册失败：" +
+                  (result && result.errorMessage
+                    ? result.errorMessage
+                    : "用户名可能已被占用！"),
+              );
             }
-          }
+          },
         });
-      }
+      };
     </script>
   </body>
 </html>

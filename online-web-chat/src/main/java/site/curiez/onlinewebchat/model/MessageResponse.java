@@ -9,4 +9,5 @@ public class MessageResponse {
     private String fromName;
     private int sessionId;
     private String content;
+    private String postTime;
 }

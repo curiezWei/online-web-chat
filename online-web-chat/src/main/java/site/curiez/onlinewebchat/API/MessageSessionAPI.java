@@ -1,7 +1,6 @@
 package site.curiez.onlinewebchat.API;
 
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpSession;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
@@ -11,9 +10,11 @@ import org.springframework.web.bind.annotation.RestController;
 import site.curiez.onlinewebchat.mapper.MessageMapper;
 import site.curiez.onlinewebchat.mapper.MessageSessionMapper;
 import site.curiez.onlinewebchat.model.Friend;
+import site.curiez.onlinewebchat.model.Message;
 import site.curiez.onlinewebchat.model.MessageSession;
 import site.curiez.onlinewebchat.model.MessageSessionUserItem;
 import site.curiez.onlinewebchat.model.User;
+import site.curiez.onlinewebchat.utils.JwtUtils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -33,12 +34,7 @@ public class MessageSessionAPI {
     public List<MessageSession> getMessageSessionList(HttpServletRequest request) {
         //根据当前登录的用户信息，获取与该用户有关的sessionId（聊天会话id编号）
         List<MessageSession> messageSessionList = new ArrayList<>();
-        HttpSession session = request.getSession(false);
-        if(session == null) {
-            log.info("[getMessageSessionList] session == null");
-            return messageSessionList;
-        }
-        User user = (User) session.getAttribute("user");
+        User user = JwtUtils.getUser(request);
         if(user == null) {
             log.info("[getMessageSessionList] user == null");
             return messageSessionList;
@@ -52,11 +48,13 @@ public class MessageSessionAPI {
             messageSession.setSessionId(sessionId);
             List<Friend> friends = messageSessionMapper.getFriendsBySessionId(sessionId,user.getUserId());
             messageSession.setFriends(friends);
-            String lastMessage = messageMapper.getLastMessageBySessionId(sessionId);
-            if(lastMessage==null) {
+            Message last = messageMapper.getLastMessageBySessionId(sessionId);
+            if (last == null) {
                 messageSession.setLastMessage("");
-            }else {
-                messageSession.setLastMessage(lastMessage);
+                messageSession.setLastTime("");
+            } else {
+                messageSession.setLastMessage(last.getContent());
+                messageSession.setLastTime(last.getPostTime());
             }
             messageSessionList.add(messageSession);
         }
@@ -67,11 +65,20 @@ public class MessageSessionAPI {
     @Transactional
     public Map<String, Integer> addMessageSession(int toUserId, HttpServletRequest request) {
         HashMap<String,Integer> res = new HashMap<>();
-        HttpSession session = request.getSession(false);
-        if(session == null) {
-            log.info("[addMessageSession] session == null");
+        User user = JwtUtils.getUser(request);
+        if(user == null) {
+            log.info("[addMessageSession] user == null");
+            res.put("sessionId", 0);
+            return res;
         }
-        User user = (User) session.getAttribute("user");
+
+        // 若两人之间已存在会话则直接复用，避免重复建会话导致消息不同步
+        Integer existSessionId = messageSessionMapper.findSessionByTwoUsers(user.getUserId(), toUserId);
+        if(existSessionId != null) {
+            res.put("sessionId", existSessionId);
+            return res;
+        }
+
         MessageSession messageSession = new MessageSession();
         messageSessionMapper.addMessageSession(messageSession);
 

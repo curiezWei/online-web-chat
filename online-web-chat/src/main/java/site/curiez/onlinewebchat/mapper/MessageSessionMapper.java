@@ -1,6 +1,7 @@
 package site.curiez.onlinewebchat.mapper;
 
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 import site.curiez.onlinewebchat.model.Friend;
 import site.curiez.onlinewebchat.model.MessageSession;
 import site.curiez.onlinewebchat.model.MessageSessionUserItem;
@@ -12,6 +13,8 @@ public interface MessageSessionMapper {
     List<Integer> getSessionIdsByUserId(int userId);
 
     List<Friend> getFriendsBySessionId(int sessionId,int selfUserId);
+
+    Integer findSessionByTwoUsers(@Param("userId") int userId, @Param("otherUserId") int otherUserId);
 
     int addMessageSession(MessageSession messageSession);
 

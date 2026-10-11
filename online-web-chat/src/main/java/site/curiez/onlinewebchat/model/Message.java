@@ -9,4 +9,5 @@ public class Message {
     private int sessionId;
     private String fromName;
     private String content;
+    private String postTime;
 }

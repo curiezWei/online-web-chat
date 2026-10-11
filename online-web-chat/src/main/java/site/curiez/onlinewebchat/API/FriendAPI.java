@@ -1,7 +1,6 @@
 package site.curiez.onlinewebchat.API;
 
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpSession;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
@@ -9,6 +8,9 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.socket.TextMessage;
+import org.springframework.web.socket.WebSocketSession;
+import site.curiez.onlinewebchat.component.OnlineUserManager;
 import site.curiez.onlinewebchat.mapper.FriendMapper;
 import site.curiez.onlinewebchat.mapper.FriendRequestMapper;
 import site.curiez.onlinewebchat.mapper.MessageMapper;
@@ -17,6 +19,7 @@ import site.curiez.onlinewebchat.mapper.UserMapper;
 import site.curiez.onlinewebchat.model.Friend;
 import site.curiez.onlinewebchat.model.FriendRequest;
 import site.curiez.onlinewebchat.model.User;
+import site.curiez.onlinewebchat.utils.JwtUtils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -41,16 +44,14 @@ public class FriendAPI {
     @Autowired
     private MessageSessionMapper messageSessionMapper;
 
+    @Autowired
+    private OnlineUserManager onlineUserManager;
+
     @GetMapping("/friendList")
     public List<Friend> getFriendList(HttpServletRequest request) {
-        HttpSession session = request.getSession(false);
-        if(session == null) {
-            log.info("[getFriendList]当前用户会话不存在！");
-            return new ArrayList<Friend>();
-        }
-        User user = (User) session.getAttribute("user");
+        User user = JwtUtils.getUser(request);
         if(user==null) {
-            log.info("[getFriendList]当前用户对象不在会话中");
+            log.info("[getFriendList]当前用户未登录");
             return new ArrayList<Friend>();
         }
         List<Friend> friends = friendMapper.selectFriendList(user.getUserId());
@@ -60,14 +61,9 @@ public class FriendAPI {
     @GetMapping("/searchUser")
     public List<User> searchUser(String userName, HttpServletRequest request) {
         List<User> result = new ArrayList<>();
-        HttpSession session = request.getSession(false);
-        if (session == null) {
-            log.info("[searchUser]当前用户会话不存在！");
-            return result;
-        }
-        User user = (User) session.getAttribute("user");
+        User user = JwtUtils.getUser(request);
         if (user == null) {
-            log.info("[searchUser]当前用户对象不在会话中");
+            log.info("[searchUser]当前用户未登录");
             return result;
         }
         if (userName == null || userName.trim().isEmpty()) {
@@ -80,8 +76,7 @@ public class FriendAPI {
     @PostMapping("/addFriend")
     public Map<String, Object> addFriend(int toUserId, HttpServletRequest request) {
         Map<String, Object> res = new HashMap<>();
-        HttpSession session = request.getSession(false);
-        User user = session == null ? null : (User) session.getAttribute("user");
+        User user = JwtUtils.getUser(request);
         if (user == null) {
             res.put("code", 0);
             res.put("msg", "当前未登录");
@@ -115,10 +110,9 @@ public class FriendAPI {
     @GetMapping("/friendRequestList")
     public List<FriendRequest> getFriendRequestList(HttpServletRequest request) {
         List<FriendRequest> result = new ArrayList<>();
-        HttpSession session = request.getSession(false);
-        User user = session == null ? null : (User) session.getAttribute("user");
+        User user = JwtUtils.getUser(request);
         if (user == null) {
-            log.info("[getFriendRequestList]当前用户对象不在会话中");
+            log.info("[getFriendRequestList]当前用户未登录");
             return result;
         }
         result = friendRequestMapper.selectByToId(user.getUserId());
@@ -129,8 +123,7 @@ public class FriendAPI {
     @Transactional
     public Map<String, Object> handleFriendRequest(int requestId, boolean accept, HttpServletRequest request) {
         Map<String, Object> res = new HashMap<>();
-        HttpSession session = request.getSession(false);
-        User user = session == null ? null : (User) session.getAttribute("user");
+        User user = JwtUtils.getUser(request);
         if (user == null) {
             res.put("code", 0);
             res.put("msg", "当前未登录");
@@ -148,17 +141,33 @@ public class FriendAPI {
         }
         friendRequestMapper.deleteById(requestId);
         log.info("处理好友申请，requestId:" + requestId + "，accept:" + accept);
+        if (accept) {
+            notifyFriendAccepted(friendRequest.getFromId());
+        }
         res.put("code", 1);
         res.put("msg", accept ? "已通过好友申请" : "已拒绝好友申请");
         return res;
+    }
+
+    private void notifyFriendAccepted(int userId) {
+        WebSocketSession webSocketSession = onlineUserManager.getWebSocketSession(userId);
+        if (webSocketSession == null || !webSocketSession.isOpen()) {
+            return;
+        }
+        try {
+            synchronized (webSocketSession) {
+                webSocketSession.sendMessage(new TextMessage("{\"type\":\"friendAccepted\"}"));
+            }
+        } catch (Exception e) {
+            log.warn("通知好友申请通过失败，userId:" + userId, e);
+        }
     }
 
     @PostMapping("/deleteFriend")
     @Transactional
     public Map<String, Object> deleteFriend(int sessionId, HttpServletRequest request) {
         Map<String, Object> res = new HashMap<>();
-        HttpSession session = request.getSession(false);
-        User user = session == null ? null : (User) session.getAttribute("user");
+        User user = JwtUtils.getUser(request);
         if (user == null) {
             res.put("code", 0);
             res.put("msg", "当前未登录");

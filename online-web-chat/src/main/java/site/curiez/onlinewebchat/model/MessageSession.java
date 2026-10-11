@@ -9,4 +9,5 @@ public class MessageSession {
     private int sessionId;
     private List<Friend> friends ;
     private String lastMessage;
+    private String lastTime;
 }

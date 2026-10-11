@@ -4,61 +4,269 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>登录</title>
-    <link rel="stylesheet" href="css/common.css" />
-    <link rel="stylesheet" href="css/login.css" />
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        height: 100%;
+        font-family:
+          -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text",
+          "Helvetica Neue", Helvetica, Arial, sans-serif;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        background: #f5f5f7;
+        color: #1d1d1f;
+        overflow-x: hidden;
+        -webkit-text-size-adjust: 100%;
+        text-size-adjust: 100%;
+      }
+
+      .cover {
+        width: 100%;
+        height: 100%;
+        background-image: url(img/wallpaper.jpg);
+        background-size: cover;
+        background-position: center center;
+        background-repeat: no-repeat;
+        position: fixed;
+        top: 0;
+        left: 0;
+        z-index: 1;
+      }
+
+      .login-wrapper {
+        min-height: 100%;
+        position: relative;
+        z-index: 2;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 32px 16px;
+        box-sizing: border-box;
+      }
+
+      .login-card {
+        width: 400px;
+        max-width: 90%;
+        padding: 48px 40px 40px;
+        background: rgba(255, 255, 255, 0.72);
+        backdrop-filter: blur(40px);
+        -webkit-backdrop-filter: blur(40px);
+        border-radius: 24px;
+        box-shadow:
+          0 4px 24px rgba(0, 0, 0, 0.06),
+          0 1px 4px rgba(0, 0, 0, 0.04);
+        text-align: center;
+        animation: fadeIn 0.5s ease-out;
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(12px) scale(0.98);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0) scale(1);
+        }
+      }
+
+      .login-icon {
+        width: 56px;
+        height: 56px;
+        margin: 0 auto 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #0071e3, #5ac8fa);
+        color: #fff;
+      }
+
+      .login-icon svg {
+        width: 28px;
+        height: 28px;
+      }
+
+      .login-title {
+        font-size: 26px;
+        font-weight: 600;
+        letter-spacing: -0.02em;
+        color: #1d1d1f;
+        margin-bottom: 4px;
+      }
+
+      .login-subtitle {
+        font-size: 15px;
+        color: #86868b;
+        margin-bottom: 32px;
+      }
+
+      .input-group {
+        margin-bottom: 16px;
+      }
+
+      .input-group input {
+        width: 100%;
+        height: 50px;
+        padding: 0 18px;
+        font-size: 16px;
+        font-family: inherit;
+        color: #1d1d1f;
+        background: #f5f5f7;
+        border: 1.5px solid #d2d2d7;
+        border-radius: 14px;
+        outline: none;
+        transition: all 0.2s ease;
+      }
+
+      .input-group input::placeholder {
+        color: #aeaeb2;
+      }
+
+      .input-group input:focus {
+        border-color: #0071e3;
+        background: #fff;
+        box-shadow: 0 0 0 4px rgba(0, 113, 227, 0.12);
+      }
+
+      .login-btn {
+        width: 100%;
+        height: 50px;
+        margin-top: 8px;
+        font-size: 17px;
+        font-weight: 600;
+        font-family: inherit;
+        color: #fff;
+        background: #0071e3;
+        border: none;
+        border-radius: 14px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        letter-spacing: 0.02em;
+      }
+
+      .login-btn:hover {
+        background: #0077ed;
+        box-shadow: 0 4px 14px rgba(0, 113, 227, 0.35);
+        transform: translateY(-1px);
+      }
+
+      .login-btn:active {
+        background: #0068d4;
+        transform: translateY(0);
+        box-shadow: none;
+      }
+
+      .switch-link {
+        margin-top: 24px;
+        font-size: 14px;
+        color: #86868b;
+      }
+
+      .switch-link a {
+        color: #0071e3;
+        text-decoration: none;
+        font-weight: 500;
+      }
+
+      .switch-link a:hover {
+        text-decoration: underline;
+      }
+
+      @media (max-width: 480px) {
+        .login-card {
+          padding: 36px 24px 28px;
+          border-radius: 20px;
+        }
+
+        .login-title {
+          font-size: 23px;
+        }
+
+        .login-subtitle {
+          margin-bottom: 24px;
+        }
+      }
+    </style>
   </head>
   <body>
     <div class="cover"></div>
     <div class="login-wrapper">
       <div class="login-card">
         <div class="login-icon">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
-            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
-            <circle cx="12" cy="7" r="4"/>
+          <svg
+            width="28"
+            height="28"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.5"
+            stroke-linecap="round"
+          >
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+            <circle cx="12" cy="7" r="4" />
           </svg>
         </div>
         <h2 class="login-title">登录</h2>
         <p class="login-subtitle">在线聊天，随时随地</p>
         <div class="input-group">
-          <input type="text" id="userName" placeholder="用户名" autocomplete="username" />
+          <input
+            type="text"
+            id="userName"
+            placeholder="用户名"
+            autocomplete="username"
+          />
         </div>
         <div class="input-group">
-          <input type="password" id="password" placeholder="密码" autocomplete="current-password" />
+          <input
+            type="password"
+            id="password"
+            placeholder="密码"
+            autocomplete="current-password"
+          />
         </div>
         <button id="submit" class="login-btn">登录</button>
-        <p class="switch-link">
-          没有账号？<a href="register.html">去注册</a>
-        </p>
+        <p class="switch-link">没有账号？<a href="register.html">去注册</a></p>
       </div>
     </div>
 
-    <script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.7.1/jquery.js"></script>
+    <script src="js/jquery.min.js"></script>
     <script>
-        let submitButton = document.querySelector('#submit');
-        submitButton.onclick = function () {
-            let userName = document.querySelector('#userName').value;
-            let password = document.querySelector('#password').value;
-            if(userName ==''||password=='') {
-                alert("请输入用户名和密码！");
-                return;
-            }
-
-            $.ajax({
-                url:"/login",
-                type:"post",
-                data:{
-                    userName : userName,
-                    password : password
-                },
-                success:function (result) {
-                    if(result&&result.userId>0) {
-                        location.href = "client.html"
-                    }else {
-                        alert("登录失败！")
-                    }
-                }
-            });
+      let submitButton = document.querySelector("#submit");
+      submitButton.onclick = function () {
+        let userName = document.querySelector("#userName").value;
+        let password = document.querySelector("#password").value;
+        if (userName == "" || password == "") {
+          alert("请输入用户名和密码！");
+          return;
         }
+
+        $.ajax({
+          url: "/login",
+          type: "post",
+          data: {
+            userName: userName,
+            password: password,
+          },
+          success: function (result) {
+            if (result && result.code === "SUCCESS" && result.data) {
+              localStorage.setItem("token", result.data);
+              location.href = "client.html";
+            } else {
+              alert(
+                "登录失败！" +
+                  (result && result.errorMessage ? result.errorMessage : ""),
+              );
+            }
+          },
+        });
+      };
     </script>
   </body>
 </html>
