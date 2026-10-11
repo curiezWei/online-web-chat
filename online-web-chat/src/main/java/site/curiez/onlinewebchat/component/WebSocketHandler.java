@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.CloseStatus;
+import org.springframework.web.socket.PongMessage;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
@@ -49,6 +50,7 @@ public class WebSocketHandler extends TextWebSocketHandler {
             log.info("user==null，未登录");
             return;
         }
+        onlineUserManager.markActive(user.getUserId());
         MessageRequest request = objectMapper.readValue(message.getPayload(), MessageRequest.class);
         if(request.getType().equals("message")) {
             transferMessage(user,request);
@@ -83,7 +85,11 @@ public class WebSocketHandler extends TextWebSocketHandler {
                 continue;
             }
             WebSocketSession webSocketSession = onlineUserManager.getWebSocketSession(friend.getFriendId());
-            if(webSocketSession == null || !webSocketSession.isOpen()) {
+            if(webSocketSession == null) {
+                continue;
+            }
+            if(!webSocketSession.isOpen()) {
+                onlineUserManager.offline(friend.getFriendId(), webSocketSession);
                 continue;
             }
             try {
@@ -92,7 +98,16 @@ public class WebSocketHandler extends TextWebSocketHandler {
                 }
             } catch (Exception e) {
                 log.warn("推送消息失败，userId：" + friend.getFriendId(), e);
+                onlineUserManager.offline(friend.getFriendId(), webSocketSession);
             }
+        }
+    }
+
+    @Override
+    public void handlePongMessage(WebSocketSession session, PongMessage message) throws Exception {
+        User user = (User) session.getAttributes().get("user");
+        if(user != null) {
+            onlineUserManager.markActive(user.getUserId());
         }
     }
 

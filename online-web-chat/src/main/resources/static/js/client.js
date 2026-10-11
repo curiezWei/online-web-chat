@@ -126,6 +126,11 @@ initMobileBack();
 let webSocket = new WebSocket(
   `${window.location.protocol === "https:" ? "wss:" : "ws:"}//${window.location.host}/WebSocketMessage?token=${encodeURIComponent(authToken)}`,
 );
+window.addEventListener("pagehide", function () {
+  try {
+    webSocket.close();
+  } catch (e) {}
+});
 webSocket.onopen = function () {
   console.log("WebSocket连接成功");
 };

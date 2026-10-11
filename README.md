@@ -21,7 +21,7 @@
 - **聊天**：基于 WebSocket 的实时私聊、历史消息拉取、消息时间显示。
 - **会话**：会话列表、最近一条消息预览（含时间）、未读消息红点计数。
 - **体验**：根据用户名生成的首字彩色头像、移动端响应式布局。
-- **安全**：防顶号 —— 同一账号在线（WebSocket 已连接）时禁止再次登录。
+- **安全**：防顶号 —— 同一账号在线（WebSocket 已连接）时禁止再次登录；服务端定时心跳（Ping/Pong）会在连接失效后自动回收在线状态，避免浏览器异常关闭导致账号被锁死。
 
 ### 三、技术栈
 
@@ -49,8 +49,8 @@ online-web-chat/                         # Git 仓库根目录
         │   ├── java/site/curiez/onlinewebchat
         │   │   ├── OnlineWebChatApplication.java
         │   │   ├── API                    # 控制器：UserAPI / FriendAPI / MessageSessionAPI / MessageAPI
-        │   │   ├── component              # WebSocketHandler、OnlineUserManager
-        │   │   ├── config                 # WebSocketConfig、JwtHandshakeInterceptor、ResponseAdvice、ExceptionHandle
+        │   │   ├── component              # WebSocketHandler、OnlineUserManager、OnlineUserSweeper
+        │   │   ├── config                 # WebSocketConfig、JwtHandshakeInterceptor、ResponseAdvice、ExceptionHandle、SchedulingConfig
         │   │   ├── enums                  # ResultStatus
         │   │   ├── mapper                 # MyBatis Mapper 接口
         │   │   ├── model                  # 实体类
@@ -222,6 +222,7 @@ private final static String registerKey = "curiez";
 2. 前端将 token 存入 `localStorage`，之后所有 AJAX 通过 `$.ajaxSetup` 自动携带 `Authorization: Bearer <token>`；WebSocket 通过 `?token=` 携带。
 3. 服务端 `JwtUtils.getUser(request)` 校验并解析出用户，替代了传统的 Session。
 4. **防顶号**：登录时若该账号已有在线 WebSocket 连接（`OnlineUserManager.isOnline`），直接返回登录失败「该账号已在其他地方登录」。
+5. **在线状态回收**：服务端每 20s 主动发送 WebSocket `Ping`（浏览器自动回 `Pong`），超过 60s 无响应的连接会被判定为失效并回收；页面关闭时前端也会主动关闭连接。因此即使浏览器被强杀、断网或休眠（关闭帧丢失），账号也不会被永久锁在“在线”。
 
 ### 十二、前端说明
 
@@ -272,7 +273,7 @@ location /WebSocketMessage {
 - **本地能跑、部署后样式全丢**
   - 多为 Nginx 只代理了 HTML。将全部请求（含 `/css`、`/js`、`/img`）反代到 jar 即可。
 - **防顶号导致无法登录**
-  - 若上一次连接的 WebSocket 异常关闭未被及时回收，可稍等或重启服务后再登录。
+  - 正常无需处理：服务端心跳（20s Ping、60s 超时）会在约 1 分钟内自动释放异常断开的连接，之后即可登录；若仍异常，再检查服务端日志或稍后重试。
 
 ### 十五、作者与说明
 
@@ -298,7 +299,7 @@ location /WebSocketMessage {
 - **Chat**: real-time private chat over WebSocket, message history, message timestamps.
 - **Sessions**: session list, last-message preview (with time), unread red-dot counter.
 - **UX**: colored initial-based avatars, responsive mobile layout.
-- **Security**: duplicate-login protection — an account already online cannot log in again.
+- **Security**: duplicate-login protection — an account already online cannot log in again; a server-side heartbeat (Ping/Pong) reclaims dead connections so an abnormal close won't lock the account.
 
 ### 3. Tech Stack
 
@@ -324,8 +325,8 @@ online-web-chat/                         # git repo root
         ├── database.sql                 # schema + seed script
         ├── java/site/curiez/onlinewebchat
         │   ├── API                      # controllers
-        │   ├── component                # WebSocketHandler, OnlineUserManager
-        │   ├── config                   # WebSocketConfig, JwtHandshakeInterceptor, ResponseAdvice, ExceptionHandle
+        │   ├── component                # WebSocketHandler, OnlineUserManager, OnlineUserSweeper
+        │   ├── config                   # WebSocketConfig, JwtHandshakeInterceptor, ResponseAdvice, ExceptionHandle, SchedulingConfig
         │   ├── enums / mapper / model / utils
         └── resources
             ├── application.yml          # spring.profiles.active = @profile.name@
@@ -472,6 +473,7 @@ All endpoints except login/register require the header `Authorization: Bearer <t
 2. The frontend stores it in `localStorage`; AJAX adds `Authorization: Bearer <token>` automatically (`$.ajaxSetup`); WebSocket passes it as `?token=`.
 3. The server resolves the user from the token (`JwtUtils.getUser(request)`), replacing the traditional Session.
 4. **Duplicate-login protection**: if the account already has an online WebSocket (`OnlineUserManager.isOnline`), login is rejected.
+5. **Online-state reclamation**: the server sends a WebSocket `Ping` every 20s (the browser replies automatically with `Pong`); connections silent for 60s are treated as dead and reclaimed, and the page closes the socket on unload. So killing the browser, losing network, or sleeping won't leave the account permanently "online".
 
 ### 12. Frontend
 
@@ -515,7 +517,7 @@ location /WebSocketMessage {
 - **"Database connection failed"** — verify the active profile (`dev` locally, `prod` on server) and that URL/credentials match the running MySQL.
 - **`Public Key Retrieval is not allowed`** — MySQL 8 uses `caching_sha2_password`; append `allowPublicKeyRetrieval=true` (with `useSSL=false`) to the JDBC URL.
 - **Works locally but styles are lost after deployment** — the reverse proxy likely proxies only HTML; proxy all paths to the jar.
-- **Cannot log in due to duplicate-login protection** — wait for the previous socket to be reclaimed, or restart the service.
+- **Cannot log in due to duplicate-login protection** — normally self-healing: the heartbeat (20s ping, 60s timeout) releases dead connections within about a minute; if it persists, check the server log or retry shortly.
 
 ### 15. Author & Notes
 
@@ -541,7 +543,7 @@ location /WebSocketMessage {
 - **Chat**: Echtzeit-Private-Chat über WebSocket, Nachrichtenverlauf, Zeitstempel.
 - **Sitzungen**: Sitzungsliste, Vorschau der letzten Nachricht (mit Zeit), Ungelesen-Zähler.
 - **UX**: farbige Avatare aus dem Anfangsbuchstaben, responsives Mobile-Layout.
-- **Sicherheit**: Schutz vor doppeltem Login — ein bereits online befindliches Konto kann sich nicht erneut anmelden.
+- **Sicherheit**: Schutz vor doppeltem Login — ein bereits online befindliches Konto kann sich nicht erneut anmelden; ein serverseitiger Heartbeat (Ping/Pong) gibt tote Verbindungen frei, damit ein abnormales Schließen das Konto nicht sperrt.
 
 ### 3. Technologie-Stack
 
@@ -567,8 +569,8 @@ online-web-chat/                         # git-Repository-Wurzel
         ├── database.sql                 # Schema- und Seed-Skript
         ├── java/site/curiez/onlinewebchat
         │   ├── API                      # Controller
-        │   ├── component                # WebSocketHandler, OnlineUserManager
-        │   ├── config                   # WebSocketConfig, JwtHandshakeInterceptor, ResponseAdvice, ExceptionHandle
+        │   ├── component                # WebSocketHandler, OnlineUserManager, OnlineUserSweeper
+        │   ├── config                   # WebSocketConfig, JwtHandshakeInterceptor, ResponseAdvice, ExceptionHandle, SchedulingConfig
         │   ├── enums / mapper / model / utils
         └── resources
             ├── application.yml          # spring.profiles.active = @profile.name@
@@ -715,6 +717,7 @@ Alle Endpunkte außer Login/Registrierung benötigen den Header `Authorization: 
 2. Das Frontend speichert es in `localStorage`; AJAX sendet automatisch `Authorization: Bearer <token>` (`$.ajaxSetup`); WebSocket übergibt es als `?token=`.
 3. Der Server ermittelt den Benutzer aus dem Token (`JwtUtils.getUser(request)`) — dies ersetzt die klassische Session.
 4. **Schutz vor doppeltem Login**: Ist das Konto bereits mit einem WebSocket online (`OnlineUserManager.isOnline`), wird der Login abgelehnt.
+5. **Freigabe des Online-Status**: Der Server sendet alle 20 s ein WebSocket-`Ping` (der Browser antwortet automatisch mit `Pong`); Verbindungen ohne Antwort für 60 s gelten als tot und werden freigegeben. Beim Verlassen der Seite schließt das Frontend die Verbindung. So hinterlässt ein abgestürzter Browser, Netzausfall oder Ruhezustand kein dauerhaft „online" befindliches Konto.
 
 ### 12. Frontend
 
@@ -758,7 +761,7 @@ location /WebSocketMessage {
 - **„Datenbankverbindung fehlgeschlagen"** — prüfen, ob das aktive Profil (`dev` lokal, `prod` am Server) und URL/Zugangsdaten zur laufenden MySQL passen.
 - **`Public Key Retrieval is not allowed`** — MySQL 8 nutzt `caching_sha2_password`; in der JDBC-URL `allowPublicKeyRetrieval=true` (mit `useSSL=false`) ergänzen.
 - **Lokal ok, aber Styles fehlen nach dem Deployment** — der Reverse-Proxy leitet vermutlich nur HTML weiter; alle Pfade an das jar weiterleiten.
-- **Login wegen Doppel-Login-Schutz nicht möglich** — warten, bis der alte Socket freigegeben wird, oder den Dienst neu starten.
+- **Login wegen Doppel-Login-Schutz nicht möglich** — normalerweise selbstheilend: Der Heartbeat (20 s Ping, 60 s Timeout) gibt tote Verbindungen innerhalb etwa einer Minute frei; falls nicht, Server-Log prüfen oder kurz warten.
 
 ### 15. Autor & Hinweise
 
